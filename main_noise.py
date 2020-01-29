@@ -286,8 +286,8 @@ if __name__ == '__main__':
     if args.original:
         X_train, data_minimum, data_maximum = generate_X_train()
         write_csv(X_train, index=0, dir_path="./")
-        write_graph(np.random.permutation(X_train)
-                    [:16], 0, "./")
+        np.random.shuffle(X_train)
+        write_graph(X_train[-16:], 0, "./")
 
     if not (args.train or args.test or args.original):
         print("please select train or test flag")

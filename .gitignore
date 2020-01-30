@@ -4,3 +4,15 @@
 # python
 __pycache__
 *.pyc
+
+# Project
+*.csv
+*.png
+*.npy
+*.h5
+*.txt
+
+!input_sample.png
+!output_sample.png
+!503342.csv
+!503342.npy

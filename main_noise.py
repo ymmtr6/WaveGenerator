@@ -27,6 +27,8 @@ np.random.seed(cf.Random_seed)
 
 Width = 120
 Channel = 1
+input_file_name = "503342.npy"
+l_activation = "relu"
 
 
 class Main_train():
@@ -35,7 +37,7 @@ class Main_train():
 
     def train(self):
         # Load network model
-        g = G_model(width=Width, channel=Channel)
+        g = G_model(width=Width, channel=Channel, last_activation=l_activation)
         d = D_model(width=Width, channel=Channel)
         c = Combined_model(g=g, d=d)
 
@@ -58,7 +60,7 @@ class Main_train():
         d.compile(loss='binary_crossentropy', optimizer=d_opt)
 
         # Prepare Training data
-        X_train, data_minimum, data_maximum = generate_X_train()
+        X_train, data_minimum, data_maximum = generate_X_train(input_file_name)
         train_num = X_train.shape[0]
         train_num_per_step = train_num // cf.Minibatch
         data_inds = np.arange(train_num)
@@ -80,18 +82,17 @@ class Main_train():
         for ite in range(cf.Iteration):
             ite += 1
             # Discremenator training
-            # y = dl_train.get_minibatch(shuffle=True)
             train_ind = ite % (train_num_per_step - 1)
             if ite % (train_num_per_step + 1) == max_ite:
                 np.random.shuffle(data_inds)
 
             _inds = data_inds[train_ind *
                               cf.Minibatch: (train_ind+1) * cf.Minibatch]
-            x_fake = X_train[_inds]
+            x_real = X_train[_inds]
 
             z = np.random.uniform(-1, 1, size=(cf.Minibatch, 100))
             # input_noise = np.random.normal(0, 0.3, size=(cf.Minibatch, 100))
-            x_real = g.predict([z], verbose=0)
+            x_fake = g.predict([z], verbose=0)
             x = np.concatenate((x_fake, x_real))
             t = [1] * cf.Minibatch + [0] * cf.Minibatch
             d_loss = d.train_on_batch(x, t)
@@ -226,7 +227,7 @@ def arg_parse():
     return args
 
 
-def generate_X_train(f_name="503342.npy"):
+def generate_X_train(f_name):
     """
     学習用データの作成
     画像に戻すときのために，min,maxを返す．
@@ -241,6 +242,8 @@ def generate_X_train(f_name="503342.npy"):
     # 次元拡張(チャンネル数入力の都合)
     X_train = d[:, :, None]
     X_train = X_train.astype(np.float32)
+    # Shuffle
+    np.random.shuffle(X_train)
     return X_train, minimum, maximum
 
 
@@ -284,10 +287,16 @@ if __name__ == '__main__':
         main = Main_test()
         main.test()
     if args.original:
-        X_train, data_minimum, data_maximum = generate_X_train()
-        write_csv(X_train, index=0, dir_path="./")
+        X_train, data_minimum, data_maximum = generate_X_train(input_file_name)
+        os.makedirs("./original", exist_ok=True)
+        write_csv(X_train, index=0, dir_path="./original/")
         np.random.shuffle(X_train)
-        write_graph(X_train[-16:], 0, "./")
+        for i in range(X_train.shape[0] // 16 - 1):
+            start = i * 16
+            end = (i+1) * 16
+            print(start, end, i)
+            write_graph(X_train[start:end], i,
+                        "./original")
 
     if not (args.train or args.test or args.original):
         print("please select train or test flag")

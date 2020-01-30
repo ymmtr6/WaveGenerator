@@ -25,14 +25,15 @@ import os
 #File_extensions = ['.jpg', '.png']
 
 # Training config
-Iteration = 5000
+Iteration = 10000
 Minibatch = 16
+# 5000iteration = 30epoch (Minibatch 16 * 19)
 
 # Test config
 # The total number of generated images is Test_Minibatch * Test_num
 Test_Minibatch = 16  # 100
 Test_num = 10
-Save_test_img_dir = 'test_images_noise'
+Save_test_img_dir = 'test'
 
 # if Save_combine is True, generated images in test are stored combined with same minibatch's
 # if False, generated images are stored separately
@@ -44,12 +45,12 @@ Save_train_step = 100
 Save_iteration_disp = True
 
 # Save config
-Save_dir = 'models_noise'
+Save_dir = 'models'
 Save_d_name = 'D.h5'
 Save_g_name = 'G.h5'
 Save_d_path = os.path.join(Save_dir, Save_d_name)
 Save_g_path = os.path.join(Save_dir, Save_g_name)
-Save_train_img_dir = 'train_images_noise'
+Save_train_img_dir = 'train'
 Save_img_num = 5
 
 # Other config

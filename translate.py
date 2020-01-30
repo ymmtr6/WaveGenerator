@@ -8,7 +8,17 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("503342.csv")
+
+def arg_parse():
+    parser = argparse.ArgumentParser(description='CNN implemented with Keras')
+    parser.add_argument("--input", "-i", default="input",
+                        type=str, help="csv file")
+    args = parser.parse_args()
+    return args
+
+
+args = arg_parse()
+df = pd.read_csv(args.input)
 df = df.drop(columns=df.columns[[0]])
 
-np.save("503342.npy", df.values)
+np.save(os.path.basename(f_name).split(".")[0] + ".npy", df.values)

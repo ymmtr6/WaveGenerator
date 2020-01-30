@@ -28,7 +28,6 @@ np.random.seed(cf.Random_seed)
 Width = 120
 Channel = 1
 input_file_name = "503342.npy"
-l_activation = "relu"
 
 
 class Main_train():
@@ -37,7 +36,7 @@ class Main_train():
 
     def train(self):
         # Load network model
-        g = G_model(width=Width, channel=Channel, last_activation=l_activation)
+        g = G_model(width=Width, channel=Channel)
         d = D_model(width=Width, channel=Channel)
         c = Combined_model(g=g, d=d)
 
@@ -93,7 +92,7 @@ class Main_train():
             z = np.random.uniform(-1, 1, size=(cf.Minibatch, 100))
             # input_noise = np.random.normal(0, 0.3, size=(cf.Minibatch, 100))
             x_fake = g.predict([z], verbose=0)
-            x = np.concatenate((x_fake, x_real))
+            x = np.concatenate((x_real, x_fake))
             t = [1] * cf.Minibatch + [0] * cf.Minibatch
             d_loss = d.train_on_batch(x, t)
 
@@ -242,8 +241,7 @@ def generate_X_train(f_name):
     # 次元拡張(チャンネル数入力の都合)
     X_train = d[:, :, None]
     X_train = X_train.astype(np.float32)
-    # Shuffle
-    np.random.shuffle(X_train)
+    print("{}: {}".format(f_name, X_train.shape[0]))
     return X_train, minimum, maximum
 
 

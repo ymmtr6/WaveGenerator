@@ -25,7 +25,7 @@ import os
 #File_extensions = ['.jpg', '.png']
 
 # Training config
-Iteration = 10000
+Iteration = 5000
 Minibatch = 16
 # 5000iteration = 30epoch (Minibatch 16 * 19)
 

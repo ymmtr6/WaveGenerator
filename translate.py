@@ -21,4 +21,4 @@ args = arg_parse()
 df = pd.read_csv(args.input)
 df = df.drop(columns=df.columns[[0]])
 
-np.save(os.path.basename(f_name).split(".")[0] + ".npy", df.values)
+np.save(os.path.basename(args.input).split(".")[0] + ".npy", df.values)

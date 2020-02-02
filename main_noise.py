@@ -27,7 +27,7 @@ np.random.seed(cf.Random_seed)
 
 Width = 120
 Channel = 1
-input_file_name = "503342.npy"
+input_file_name = "503345.npy"
 
 
 class Main_train():
@@ -36,7 +36,8 @@ class Main_train():
 
     def train(self):
         # Load network model
-        g = G_model(width=Width, channel=Channel)
+        g = G_model(width=Width, channel=Channel,
+                    last_activation="relu", kernel_size=5)
         d = D_model(width=Width, channel=Channel)
         c = Combined_model(g=g, d=d)
 
@@ -148,7 +149,8 @@ class Main_test():
         Test Functions
         """
         # Load network model
-        g = G_model(width=Width, channel=Channel)
+        g = G_model(width=Width, channel=Channel,
+                    last_activation="relu", kernel_size=5)
         g.load_weights(cf.Save_g_path, by_name=True)
 
         print('-- Test start!!')

@@ -6,7 +6,7 @@ from keras.layers import *
 from keras.initializers import RandomNormal as RN, Constant
 
 
-def G_model(width=120, channel=1, last_activation="relu"):
+def G_model(width=120, channel=1, last_activation="relu", kernel_size=5):
     inputs_z = Input((100,), name="Z")
     in_w = int(width / 4)
     d_dim = 128
@@ -14,9 +14,10 @@ def G_model(width=120, channel=1, last_activation="relu"):
     x = BatchNormalization()(x)
     x = Reshape((in_w, d_dim), input_shape=(in_w * d_dim,))(x)
     x = UpSampling1D(size=2)(x)
-    x = Conv1D(64, 5, padding="same", activation="tanh", name="g_conv1")(x)
+    x = Conv1D(64, kernel_size, padding="same",
+               activation="tanh", name="g_conv1")(x)
     x = UpSampling1D(size=2)(x)
-    x = Conv1D(1, 5, padding="same",
+    x = Conv1D(1, kernel_size, padding="same",
                activation=last_activation, name="g_out")(x)
     model = Model(inputs=[inputs_z], outputs=[x], name="G")
     return model

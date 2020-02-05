@@ -52,6 +52,46 @@ def D_model(width=120, channel=1):
     return model
 
 
+def build_generator(input_size=100):
+    cnn = Sequential()
+    cnn.add(Dense(3 * 3 * 384, input_dim=input_size, activation="relu")
+            cnn.add(Reshape((3, 3, 384))))
+
+    # upsampling
+    cnn.add(Conv2DTranspose(192, 5, strides=1, padding="valid",
+                            activation="relu", kernel_initializer="glorot_normal"))
+    cnn.add(BatchNormalization())
+
+    # upsampling
+    cnn.add(Conv2DTranspose(96, 5, strides=2, padding="same",
+                            activaiton="relu", kernel_initializer="glorot_normal"))
+    cnn.add(BatchNormalization())
+
+    # upsampling
+    cnn.add(Conv2DTranspose(1, 5, strides=2, padding="same",
+                            activation="tanh", kernel_initializer="glorot_normal"))
+
+    # this is the z space
+    latent = Input(shape=(input_size,))
+
+    # class
+    image_class = Input(shape=(1,), dtype="int32")
+
+    classes = Embedding(num_classes, input_size,
+                        embeddings_initializer="glorot_normal")(image_class)
+
+    h = multiply([input_size, classes])
+
+    fake_image = cnn(h)
+
+    return Model([input_size, image_class], fake_image)
+
+
+def build_discriminator():
+    cnn = Sequential()
+    cnn.add(Conv2D(32, 3, padding="same", strides=2, input_shape=(28, 28, 1)))
+
+
 """
 def G_model(width, channel=1):
     inputs = Input((100,), name="Z")

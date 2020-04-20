@@ -3,24 +3,14 @@ import os
 
 # Network config
 # Input width and Height
-# Height, Width = 28, 28  # MNIST
-#Height, Width = 64, 64
-#Channel = 3
-
-# input data shape
-# channels_last -> [mb, c, h, w] , channels_first -> [mb, h, w, c]
-#Input_type = 'channels_last'
-
-# Directory paths for training
-# Train_dirs = [
-#    '/mnt/c/Users/demo/Research_nagayosi/Dataset/Moca',
-#    '/mnt/c/Users/demo/Research_nagayosi/Dataset/text_image'
-# ]
+Width = 120
+Channel = 1
 
 # Data augmentation
-#Horizontal_flip = True
-#Vertical_flip = False
-#Rotate_ccw90 = False
+Data_range = (0, 100)
+Outlier = True
+Normalize = True
+Zero_Exclusion = True
 
 #File_extensions = ['.jpg', '.png']
 

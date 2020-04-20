@@ -14,20 +14,27 @@ import keras
 import os
 import matplotlib
 import matplotlib.pyplot as plt
+
+# matplot, tensorflow の初期設定
 matplotlib.use("Agg")
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 K.set_session(sess)
-data_minimum = 0
-data_maximum = 100
 
+# データの値域を指定(正規化、外れ値除去に利用)
+data_minimum, data_maximum = cf.Data_range
+
+# 乱数を固定
 np.random.seed(cf.Random_seed)
 
-Width = 120
-Channel = 1
-input_file_name = "503345.npy"
+# データサイズ
+Width = cf.Width
+Channel = cf.Channel
+
+# 入力データのファイルパス、引数で上書き
+input_file_name = None
 
 
 class Main_train():
@@ -198,7 +205,7 @@ def save_images_separate(imgs, index, dir_path):
 
 def write_graph(imgs, index, dir_path):
     """
-
+    120個のデータ点を線グラフにして記述
     """
     B, W, C = imgs.shape
     imgs = denormalize(imgs, minimum=data_minimum, maximum=data_maximum,)
@@ -224,6 +231,8 @@ def arg_parse():
     parser.add_argument('--train', dest='train', action='store_true')
     parser.add_argument('--test', dest='test', action='store_true')
     parser.add_argument("--original", dest="original", action="store_true")
+    parser.add_argument(
+        "-i", "--input", default="503345.npy", help="input file(npy)")
     args = parser.parse_args()
     return args
 
@@ -235,11 +244,14 @@ def generate_X_train(f_name):
     """
     d = np.load(f_name)
     # 0が続くデータは削除
-    d = d[~np.all(d < 5, axis=1)]
+    if cf.Zero_Exclusion:
+        d = d[~np.all(d < 5, axis=1)]
     # 2σを基準に外れ値を除去
-    d = outlier(d)
+    if cf.Outlier:
+        d = outlier(d)
     # [0, 1]に正規化
-    d, (minimum, maximum) = normalize(d)
+    if cf.Normalize:
+        d, (minimum, maximum) = normalize(d)
     # 次元拡張(チャンネル数入力の都合)
     X_train = d[:, :, None]
     X_train = X_train.astype(np.float32)
@@ -279,14 +291,14 @@ def denormalize(x, minimum, maximum):
 if __name__ == '__main__':
     # train, test, originalのフラグにそれぞれ対応する
     args = arg_parse()
+    # 入力ファイル名をinputに上書き
+    input_file_name = args.input
 
-    if args.train:
-        main = Main_train()
-        main.train()
-    if args.test:
-        main = Main_test()
-        main.test()
-    if args.original:
+    if args.train:  # 学習
+        Main_train().train()
+    if args.test:  # テスト
+        Main_test().test()
+    if args.original:  # 学習データの確認
         X_train, data_minimum, data_maximum = generate_X_train(input_file_name)
         os.makedirs("./original", exist_ok=True)
         write_csv(X_train, index=0, dir_path="./original/")

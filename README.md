@@ -26,26 +26,20 @@
 
 ## Run
 
+iterationやバッチ数、細かい設定は、config_noise.pyで記述している。
+
 ```
-$ python3 visualize.py
+$ python3 translate.py -i hoge.csv
 $ python3 main_noise.py --train --test
 ```
 
-## Data
+## データの記述
 
 1. Remove ZERO data
 2. Normalize
 3. Outlier
 
 詳細はmain_noise.pyのX_train_generate()
-
-## 比較
-
-|         | ZERO | Outlier | Normalize ||Result|
-|----     |----- |----     |----       |----|----|
-|A        | ○    |         |           ||aaa|
-|B        | ○    | ○       |           ||aaa|
-|C        | ○    | ○       | ○         ||aaa|
 
 ## 今後の課題
 

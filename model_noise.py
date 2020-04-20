@@ -6,8 +6,8 @@ from keras.layers import *
 from keras.initializers import RandomNormal as RN, Constant
 
 
-def G_model(width=120, channel=1, last_activation="relu", kernel_size=5):
-    inputs_z = Input((100,), name="Z")
+def G_model(z_size=100, width=120, channel=1, last_activation="relu", kernel_size=5):
+    inputs_z = Input((z_size,), name="Z")
     in_w = int(width / 4)
     d_dim = 128
     x = Dense(in_w * d_dim, activation="tanh", name="g_dense1")(inputs_z)
@@ -58,9 +58,9 @@ def D_model(width=120, channel=1):
 
 
 def ACGAN_D_model(width=100, channel=1, num_classes=6):
-    input_image = Input(input_shape=(width, channel), name="X")
+    input_x = Input(input_shape=(width, channel), name="X")
     x = Conv1D(64, 5, padding="same", activation="tanh",
-               name="d_conv1")(inputs_image)
+               name="d_conv1")(x)
     x = MaxPooling1D(pool_size=2)(x)
     x = Conv1D(128, 5, padding="same", activation="tanh", name="d_conv2")(x)
     x = MaxPooling1D(pool_size=2)(x)
@@ -69,7 +69,7 @@ def ACGAN_D_model(width=100, channel=1, num_classes=6):
 
     aux = Dense(num_classes, activation="softmax", name="auxiliary")(x)
     fake = Dense(1, activation="sigmoid", name="d_out")(x)
-    model = Model(inputs=[inputs_x], outputs=[fake, aux], name="D")
+    model = Model(inputs=[input_x], outputs=[fake, aux], name="D")
     return model
 
 

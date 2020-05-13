@@ -12,7 +12,14 @@ __pycache__
 *.h5
 *.txt
 
+# setting file
+.gitignore
+.idea
+
+
 !input_sample.png
 !output_sample.png
 !503342.csv
 !503342.npy
+
+

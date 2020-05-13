@@ -18,7 +18,7 @@ def arg_parse():
 
 
 args = arg_parse()
-df = pd.read_csv(args.input)
+df = pd.read_csv(args.input, header=None)
 df = df.drop(columns=df.columns[[0]])
 
 np.save(os.path.basename(args.input).split(".")[0] + ".npy", df.values)
